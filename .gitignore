@@ -1,0 +1,25 @@
+# remote-agent/.gitignore
+# ---- ignore all ----
+*
+
+# ---- allow dirs ----
+!*/
+!*.py
+
+# ---- block 呢啲（就算 whitelist 咗都唔要）----
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.log
+.env
+data/history/
+
+# ---- allow root files ----
+!.gitignore
+!README.md
+!pyproject.toml
+!.env.example
+
+# ---- config（要 track）----
+!config/
+!config/*.yaml

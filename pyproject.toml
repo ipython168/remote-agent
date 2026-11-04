@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"] 
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "remote-agent"
+version = ["version"]
+description = "Mobile-controlled AI agent for your PC"
+readme = "README.md"
+requires-python = ">=3.13"
+
+# 預留基礎依賴項，有需要可自行追加
+dependencies = [ 
+    "py-cord>=2.6.0",
+    "pyyaml>=6.0.2",
+    "python-dotenv>=1.0.1",
+    
+]
+
+[project.optional-dependencies]
+colab = ["nest-asyncio>=1.6.0"]
+openai = ["openai>=1.0.0", "tiktoken>=0.8.0"]
+gemini = ["google-genai>=1.0.0"]
+ollama = ["ollama>=0.4.0"]
+dev = ["pytest>=8.0.0"]
+ifunc = ["ifunc @ git+https://github.com/ipython168/ifunc.git"]
+
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.setuptools.dynamic]
+version = {attr = "remote_agent.__version__.__version__"}
+
+
+
+
+
+
+
+
+
