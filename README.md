@@ -17,17 +17,39 @@ The system is built with a highly modular architecture, following the **Adapter 
 - **Software Architecture**: Object-Oriented Design (OOP), Adapter Pattern, Dependency Injection.
 - **DevOps**: Modular package structure (`pyproject.toml`), Environment Variables (`.env`), Logging (`logging.yaml`).
 
+
+
 ## 🚀 Quick Start
-1. Clone the repository.
+
+### 1. Local / Server Setup (Windows / Linux / Mac)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ipython168/remote-agent.git
+   cd remote-agent
+   ```
 2. Install dependencies:
    ```bash
    pip install -e .
    ```
 3. Configure your `.env` (API keys) and `configs/settings.yaml`.
-4. Run the bot:
+4. Run the agent:
    ```bash
    python -m remote_agent
    ```
+
+### 2. Google Colab Integration
+If you are using Colab as the worker machine (e.g., for free GPU or to keep the bot running), use the provided runner script:
+
+```python
+# In a Colab notebook cell
+from scripts.run_colab import start
+
+# This will initialize the environment and start the Discord bot
+task = start()
+```
+*(Note: Ensure your Google Drive is mounted so the bot can access `configs/` and `data/`.)*
+
+
 
 ## 📌 Roadmap
 - **Stage 1 (Completed)**: Text chat, memory, and persona management.

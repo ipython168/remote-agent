@@ -83,7 +83,7 @@ class Chat(commands.Cog):
                 reply = await asyncio.to_thread(
                     self.bot.brain.chat,
                     messages,
-                    max_tokens=2048,  #<< 沒有 max_output_tokens
+                    max_tokens=2048,  # << 沒有 max_output_tokens
                     tools=filtered_tools,
                     on_step=send_step,
                     loop=current_loop,
@@ -93,6 +93,10 @@ class Chat(commands.Cog):
             except Exception as e:
                 await message.reply(f"❌ Brain error: `{e}`")
                 return
+
+        # 清理可能殘留嘅 ✅ 字眼（只限普通對話）
+        #if reply.startswith("✅ **最終回答：**\n"):
+        #    reply = reply.replace("✅ **最終回答：**\n", "", 1)
 
         # 如果 AI 乜都冇回，俾個預設答案
         if not reply or not reply.strip():
@@ -182,6 +186,32 @@ class Chat(commands.Cog):
         ]
         await ctx.reply("\n".join(lines))
 # ================================================= #
+    @commands.command(name="model")
+    async def set_model(self, ctx: commands.Context, model_name: str = None):
+        from remote_agent.brain.colab import MODEL_LIST
+
+        """切換 AI 模型 (例如: !model google/gemini-3.8-flash)"""
+        if not model_name:
+            current = getattr(self.bot.brain, "model", "unknown")
+            available = "\n".join([f"- `{m}`" for m in MODEL_LIST])
+            await ctx.reply(f"當前模型：`{current}`\n\n**可用模型：**\n{available}\n\n用法：`!model <model_name>`")
+
+            return
+
+        if not hasattr(self.bot.brain, "model"):
+            await ctx.reply("❌ 當前 Brain 唔支援切換 Model。")
+            return
+
+        # 檢查 Model 名有冇打錯
+        if model_name not in MODEL_LIST:
+            available = "\n".join([f"- `{m}`" for m in MODEL_LIST])
+            await ctx.reply(f"❌ 找不到模型 `{model_name}`。\n\n**可用模型：**\n{available}")
+            return
+
+        old_model = self.bot.brain.model
+        self.bot.brain.model = model_name
+        await ctx.reply(f"✅ 已切換 Model：`{old_model}` ➡️ `{model_name}`\n(注意：重啟 Bot 後會還原為設定檔預設值)")
+# ================================================= #
     @commands.command(name="compact")
     async def compact(self, ctx: commands.Context):
         from remote_agent.brain.base import Message
@@ -244,6 +274,7 @@ class Chat(commands.Cog):
             ("!exec <cmd>", "手動執行 shell command（預設喺 /content 執行）"),
             ("!clear [n]", "批量刪除頻道訊息（預設 20 條）"),
             ("!cmd", "列出所有 command"),
+            ("!model", "轉 model"),            
             ("<普通訊息>", "同 AI 傾偈"),
         ]
         lines = [f"`{c}` — {d}" for c, d in cmds]
