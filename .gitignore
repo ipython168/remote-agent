@@ -2,9 +2,21 @@
 # ---- ignore all ----
 *
 
+# ---- allow root files ----
+!.gitignore
+!README.md
+!pyproject.toml
+!.env.example
+
 # ---- allow dirs ----
 !*/
-!*.py
+!*.py 
+!config/
+!docs/screenshots
+
+# ---- allow files ----
+!config/*.yaml
+!docs/screenshots/*.png
 
 # ---- block 呢啲（就算 whitelist 咗都唔要）----
 __pycache__/
@@ -14,12 +26,3 @@ __pycache__/
 .env
 data/history/
 
-# ---- allow root files ----
-!.gitignore
-!README.md
-!pyproject.toml
-!.env.example
-
-# ---- config（要 track）----
-!config/
-!config/*.yaml
