@@ -31,17 +31,19 @@ class Chat(commands.Cog):
             # 2. Coder 專屬嘅嚴格安全規則 (只限有 exec 權限)            
             if "exec" in allowed_tools:
                 system_content += (
+                    "- **你係 AI Agent，你有 exec 工具。**"
                     "\n\n## 🛡️ 系統安全與工具規則 (最高優先級)\n"
                     "- **延續任務規則**：如果用戶只係打「繼續」、「go on」或者「再做」等意思，代表你要根據對話歷史，接住頭先未完成嘅任務繼續做（例如換個方法再試、或者行下一步），千萬唔好當係新問題重新問用戶。\n"
                     "- **禁止幻覺規則**：你只可以根據 `exec` 工具回傳嘅真實結果回答用戶。如果你冇真正叫用工具，或者工具冇回傳成功，你絕對不可以假裝任務已完成或捏造檔案路徑。\n"
-                    "- 你的 Google Drive 專案路徑是 `/content/drive/MyDrive/develop/Projects/`。唔好用 `find /content` 掃描全機，會 Timeout。\n"
-                    "- **專案結構**：每個 repo 嘅 source code 都放喺 `Projects/{repo-name}/src/{module_name}`。例如 `ifunc` repo 嘅 code 就喺 `Projects/ifunc/src/ifunc`。\n"
-                    "- 搵 Code 請用 `grep` 工具，`path` 指向 `src/ifunc`。唔好用 `grep -rn` 掃描成個 repo。\n"
-                    "- 寫程式、下載檔案一律在 `/content` 進行。\n"
-                    "- **工作目錄限制**：你嘅 `exec` 工具預設啟動位置永遠係 `/content`。每次 `exec` 都係一個全新嘅 Shell。\n"
-                    "- **嚴禁修改 Google Drive**：只准用 `cat`, `grep`, `sed`, `ls`。不准 `rm`, `mv`, `cp`, `touch`, `>`。\n"
-                    "- 安裝套件用 `exec` (例如 `pip install yt-dlp`)。\n"
-                    "- 建立/修改檔案後，必須用 `cat` 或 `ls` 驗證。\n"
+                    "- **專案路徑**：`/content/drive/MyDrive/develop/Projects/`。\n"
+                    "- **睇檔案**：用 `exec` 配合 `ls` 或 `cat`。絕對不要用 `find` 或 `grep -r` 掃描全機。\n"
+                    "- **工作目錄**：`exec` 永遠喺 `/content` 執行。\n"
+                    "- **禁止修改 Drive**：只准用唯讀指令。所有寫入、下載必須喺 `/content` 進行。\n"
+                    "- **強制驗證**：必須真正呼叫工具，不可用文字捏造結果。\n"
+                    "- **複製檔案規則**：如果你想由 Google Drive 複製檔案出嚟（例如 cookies.txt），絕對不可以使用 `cp` 或 `mv`。請使用 `cat <Drive路徑> > /content/<檔名>`，或者用 `tr -d '\\r' < <Drive路徑> > /content/<檔名>` 來清除換行符。\n"                  
+                    "\n【⚠️ 絕對格式要求】\n"
+                    "如果你需要使用工具（例如 `exec`），你**必須**使用 Function Calling 機制輸出 `tool_calls` JSON，絕對不可以將工具代碼當作普通文字寫在回覆中。\n"
+                    "你可以同時在 `content` 寫下你的思考過程，但必須同時觸發 `tool_calls`。\n"
                 ) 
                 
             messages.append(Message(role="system", content=system_content))

@@ -66,7 +66,12 @@ def run_command(cmd: str, cwd: str = "/content") -> str:
         if not output:
             return "✅ 執行成功，無輸出。"
             
-        return "".join(output)
+        # 限制最多回傳 3000 字，防止 AI 被淹沒
+        final_out = "".join(output)
+        if len(final_out) > 3000:
+            return final_out[:3000] + f"\n\n... (內容太長，已截斷。原本長度: {len(final_out)} 字)"
+        return final_out
+
     except subprocess.TimeoutExpired:
         logger.warning("exec timeout: %s", cmd)
         return "❌ Error: 指令超時 (30 秒限制)。請檢查是否用了 `grep -r` 掃描全機，或者改用精確路徑。"
